@@ -43,7 +43,7 @@ public class BingoModRandomizer
         final Thread exportProcessThread = new Thread( process);
         this.startService( "BingoMod CSV Export", exportProcessThread);
         // some example code
-        logger.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+       // logger.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
     }
     private void startService( final String serviceName, final Thread thread )
     {
