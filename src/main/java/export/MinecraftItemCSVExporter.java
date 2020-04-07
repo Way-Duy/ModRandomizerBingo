@@ -48,7 +48,7 @@ import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import com.snagtype.modbingo.BingoModRandomizer;
-//import appeng.core.ModBingoLog;
+////import appeng.core.ModBingoLog;
 
 /**
  * handles the exporting including processing, transformation and persisting the information
@@ -164,13 +164,13 @@ final class MinecraftItemCSVExporter implements Exporter
 			if( this.mode == ExportMode.VERBOSE )
 			{
 				final Item item = input.getItem();
-				//final String unlocalizedItem = input.getUnlocalizedName();
+				final String unlocalizedItem = input.getUnlocalizedName();
 				final Block block = Block.getBlockFromItem( item );
 				final boolean isBlock = block != Blocks.AIR && !block.equals( Blocks.AIR );
 				final Class<? extends ItemStack> stackClass = input.getClass();
 				final String stackClassName = stackClass.getName();
 
-				//joinedBlockAttributes.add( unlocalizedItem );
+				joinedBlockAttributes.add( unlocalizedItem );
 				joinedBlockAttributes.add( Boolean.toString( isBlock ) );
 				joinedBlockAttributes.add( stackClassName );
 			}
@@ -260,11 +260,11 @@ final class MinecraftItemCSVExporter implements Exporter
 			}
 
 			final List<String> joinedBlockAttributes = Lists.newArrayListWithCapacity( 5 );
-			//final String unlocalizedItem = input.getUnlocalizedName();
-			//final String localization = I18n.translateToLocal( unlocalizedItem + LOCALIZATION_NAME_EXTENSION );
+			final String unlocalizedItem = input.getUnlocalizedName();
+			final String localization = I18n.translateToLocal( unlocalizedItem + LOCALIZATION_NAME_EXTENSION );
 
 			joinedBlockAttributes.add( itemName );
-			//joinedBlockAttributes.add( localization );
+			joinedBlockAttributes.add( localization );
 
 			if( this.mode == ExportMode.VERBOSE )
 			{
@@ -273,7 +273,7 @@ final class MinecraftItemCSVExporter implements Exporter
 				final Class<? extends Item> itemClass = input.getClass();
 				final String itemClassName = itemClass.getName();
 
-				//joinedBlockAttributes.add( unlocalizedItem );
+				joinedBlockAttributes.add( unlocalizedItem );
 				joinedBlockAttributes.add( Boolean.toString( isBlock ) );
 				joinedBlockAttributes.add( itemClassName );
 			}
