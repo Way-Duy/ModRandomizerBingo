@@ -7,6 +7,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.apache.logging.log4j.Logger;
 import export.ExportProcess;
 import export.ExportConfig;
@@ -52,4 +53,10 @@ public class BingoModRandomizer
         logger.info( "Starting " + serviceName );
         thread.start();
     }
+
+    @EventHandler
+    public void serverLoad(FMLServerStartingEvent event){
+        event.registerServerCommand(new PrintBingoCommand());
+    }
+
 }
