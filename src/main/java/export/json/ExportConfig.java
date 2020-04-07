@@ -48,7 +48,7 @@ public interface ExportConfig
 	boolean isCacheEnabled();
 
 	/**
-	 * config switch to always refresh the CSV. Might be useful to activate on debugging.
+	 * config switch to always refresh the Json. Might be useful to activate on debugging.
 	 *
 	 * @return true if force refresh is enabled
 	 */

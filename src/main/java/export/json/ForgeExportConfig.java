@@ -44,7 +44,7 @@ public final class ForgeExportConfig implements ExportConfig
 
 	private static final String ENABLE_FORCE_REFRESH_KEY = "enableForceRefresh";
 	private static final boolean ENABLE_FORCE_REFRESH_DEFAULT = false;
-	private static final String ENABLE_FORCE_REFRESH_DESCRIPTION = "If true, the CSV exporting will always happen. This will not use the cache to reduce the computation.";
+	private static final String ENABLE_FORCE_REFRESH_DESCRIPTION = "If true, the Json exporting will always happen. This will not use the cache to reduce the computation.";
 
 	private static final String ENABLE_CACHE_KEY = "enableCache";
 	private static final boolean ENABLE_CACHE_DEFAULT = true;
@@ -52,7 +52,7 @@ public final class ForgeExportConfig implements ExportConfig
 
 	private static final String ENABLE_ADDITIONAL_INFO_KEY = "enableAdditionalInfo";
 	private static final boolean ENABLE_ADDITIONAL_INFO_DEFAULT = false;
-	private static final String ENABLE_ADDITIONAL_INFO_DESCRIPTION = "Will output more detailed information into the CSV like corresponding items";
+	private static final String ENABLE_ADDITIONAL_INFO_DESCRIPTION = "Will output more detailed information into the Json like corresponding items";
 
 	private static final String DIGEST_KEY = "digest";
 	private static final String DIGEST_DEFAULT = "";

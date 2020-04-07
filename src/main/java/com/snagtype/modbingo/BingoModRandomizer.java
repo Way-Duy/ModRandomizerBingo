@@ -41,7 +41,7 @@ public class BingoModRandomizer
     {
         final JsonExportProcess process = new JsonExportProcess(this.configDirectory, this.exportConfig);
         final Thread exportProcessThread = new Thread( process);
-        this.startService( "BingoMod CSV Export", exportProcessThread);
+        this.startService( "BingoMod Json Export", exportProcessThread);
         // some example code
        // logger.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
     }

@@ -38,7 +38,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 
 /**
- * Main entry point for exporting the CSV file
+ * Main entry point for exporting the Json file
  *
  * makes everything threadable
  *
@@ -48,9 +48,9 @@ import net.minecraftforge.registries.IForgeRegistry;
  */
 public class JsonExportProcess implements Runnable
 {
-    private static final String FORCE_REFRESH_MESSAGE = "Force Refresh enabled. Will ignore cache and export CSV content.";
+    private static final String FORCE_REFRESH_MESSAGE = "Force Refresh enabled. Will ignore cache and export Json content.";
     private static final String CACHE_ENABLED_MESSAGE = "Cache is enabled. Checking for new mod configurations.";
-    private static final String EQUAL_CONTENT_MESSAGE = "Same mod configuration was found. Not updating CSV content.";
+    private static final String EQUAL_CONTENT_MESSAGE = "Same mod configuration was found. Not updating Json content.";
     private static final String UNEQUAL_CONTENT_MESSAGE = "New mod configuration was found. Commencing exporting.";
     private static final String CACHE_DISABLED_MESSAGE = "Cache is disabled. Commencing exporting.";
     private static final String EXPORT_START_MESSAGE = "Item Exporting ( started )";
@@ -64,7 +64,7 @@ public class JsonExportProcess implements Runnable
     private final ExportConfig config;
 
     /**
-     * @param exportDirectory directory where the final CSV file will be exported to
+     * @param exportDirectory directory where the final Json file will be exported to
      * @param config configuration to manipulate the export process
      */
     public JsonExportProcess( @Nonnull final File exportDirectory, @Nonnull final ExportConfig config )
@@ -76,7 +76,7 @@ public class JsonExportProcess implements Runnable
     }
 
     /**
-     * Will check and export if various config settings will lead to exporting the CSV file.
+     * Will check and export if various config settings will lead to exporting the Json file.
      */
     @Override
     public void run()

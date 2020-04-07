@@ -17,11 +17,11 @@
  */
 
 /**
- * the export package is to export all the required information for recipes into a convenient CSV file
+ * the export package is to export all the required information for recipes into a convenient Json file
  * often names are difficult to acquire without access to the internal names.
  *
  * To save from rescanning every start-up it can save a list of mods and their version
- * and if only something changed, it requires to update the CSV.
+ * and if only something changed, it requires to update the Json.
  *
  * There is no explicit check if it was manually tempered
  *
