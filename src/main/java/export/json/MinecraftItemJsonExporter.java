@@ -16,28 +16,14 @@
  * along with Applied Energistics 2.  If not, see <http://www.gnu.org/licenses/lgpl>.
  */
 
-package export;
+package export.json;
 
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.Charset;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.snagtype.modbingo.ModBingoLog;
-import org.apache.commons.io.FileUtils;
-
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
@@ -47,7 +33,13 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
-import com.snagtype.modbingo.BingoModRandomizer;
+import org.apache.commons.io.FileUtils;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.util.List;
 ////import appeng.core.ModBingoLog;
 
 /**
@@ -57,9 +49,9 @@ import com.snagtype.modbingo.BingoModRandomizer;
  * @version rv3 - 14.08.2015
  * @since rv3 14.08.2015
  */
-final class MinecraftItemCSVExporter implements Exporter
+final class MinecraftItemJsonExporter implements export.json.Exporter
 {
-	private static final String ITEM_CSV_FILE_NAME = "items.csv";
+	private static final String ITEM_JSON_FILE_NAME = "items.json";
 	private static final String MINIMAL_HEADER = "Mod:Item:MetaData, Localized Name";
 	private static final String VERBOSE_HEADER = MINIMAL_HEADER + ", Unlocalized Name, Is Block?, Class Name";
 	private static final String EXPORT_SUCCESSFUL_MESSAGE = "Exported successfully %d items into %s";
@@ -70,7 +62,7 @@ final class MinecraftItemCSVExporter implements Exporter
 	@Nonnull
 	private final IForgeRegistry<Item> itemRegistry;
 	@Nonnull
-	private final ExportMode mode;
+	private final export.json.ExportMode mode;
 
 	/**
 	 * @param exportDirectory directory of the resulting export file. Non-null required.
@@ -79,7 +71,7 @@ final class MinecraftItemCSVExporter implements Exporter
 	 * phase when all items are determined)
 	 * @param mode mode in which the export should be operated. Resulting CSV will change depending on this.
 	 */
-	MinecraftItemCSVExporter( @Nonnull final File exportDirectory, @Nonnull final IForgeRegistry<Item> itemRegistry, @Nonnull final ExportMode mode )
+	MinecraftItemJsonExporter(@Nonnull final File exportDirectory, @Nonnull final IForgeRegistry<Item> itemRegistry, @Nonnull final export.json.ExportMode mode )
 	{
 		this.exportDirectory = Preconditions.checkNotNull( exportDirectory );
 		Preconditions.checkArgument( !exportDirectory.isFile() );
@@ -99,19 +91,19 @@ final class MinecraftItemCSVExporter implements Exporter
 		final Joiner newLineJoinerIgnoringNull = newLineJoiner.skipNulls();
 		final String joined = newLineJoinerIgnoringNull.join( lines );
 
-		final File file = new File( this.exportDirectory, ITEM_CSV_FILE_NAME );
+		final File file = new File( this.exportDirectory, ITEM_JSON_FILE_NAME );
 
 		try(final Writer writer = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( file ), Charset.forName( "UTF-8" ) ) ) )
 		{
 			FileUtils.forceMkdir( this.exportDirectory );
 
-			final String header = this.mode == ExportMode.MINIMAL ? MINIMAL_HEADER : VERBOSE_HEADER;
+			final String header = this.mode == export.json.ExportMode.MINIMAL ? MINIMAL_HEADER : VERBOSE_HEADER;
 			writer.write( header );
 			writer.write( "\n" );
 			writer.write( joined );
 			writer.flush();
 
-			ModBingoLog.info( EXPORT_SUCCESSFUL_MESSAGE, lines.size(), ITEM_CSV_FILE_NAME );
+			ModBingoLog.info( EXPORT_SUCCESSFUL_MESSAGE, lines.size(), ITEM_JSON_FILE_NAME );
 		}
 		catch( final IOException e )
 		{
@@ -130,9 +122,9 @@ final class MinecraftItemCSVExporter implements Exporter
 		@Nonnull
 		private final String itemName;
 		@Nonnull
-		private final ExportMode mode;
+		private final export.json.ExportMode mode;
 
-		private TypeExtractFunction( @Nonnull final String itemName, @Nonnull final ExportMode mode )
+		private TypeExtractFunction( @Nonnull final String itemName, @Nonnull final export.json.ExportMode mode )
 		{
 			this.itemName = Preconditions.checkNotNull( itemName );
 			Preconditions.checkArgument( !itemName.isEmpty() );
@@ -161,7 +153,7 @@ final class MinecraftItemCSVExporter implements Exporter
 			joinedBlockAttributes.add( metaName );
 			joinedBlockAttributes.add( localization );
 
-			if( this.mode == ExportMode.VERBOSE )
+			if( this.mode == export.json.ExportMode.VERBOSE )
 			{
 				final Item item = input.getItem();
 				final String unlocalizedItem = input.getUnlocalizedName();
@@ -198,13 +190,13 @@ final class MinecraftItemCSVExporter implements Exporter
 		@Nonnull
 		private final IForgeRegistry<Item> itemRegistry;
 		@Nonnull
-		private final ExportMode mode;
+		private final export.json.ExportMode mode;
 
 		/**
 		 * @param itemRegistry used to retrieve the name of the item
 		 * @param mode extracts more or less information from item depending on mode
 		 */
-		ItemRowExtractFunction( @Nonnull final IForgeRegistry<Item> itemRegistry, @Nonnull final ExportMode mode )
+		ItemRowExtractFunction( @Nonnull final IForgeRegistry<Item> itemRegistry, @Nonnull final export.json.ExportMode mode )
 		{
 			this.itemRegistry = Preconditions.checkNotNull( itemRegistry );
 			this.mode = Preconditions.checkNotNull( mode );
@@ -266,7 +258,7 @@ final class MinecraftItemCSVExporter implements Exporter
 			joinedBlockAttributes.add( itemName );
 			joinedBlockAttributes.add( localization );
 
-			if( this.mode == ExportMode.VERBOSE )
+			if( this.mode == export.json.ExportMode.VERBOSE )
 			{
 				final Block block = Block.getBlockFromItem( input );
 				final boolean isBlock = block != Blocks.AIR && !block.equals( Blocks.AIR );
