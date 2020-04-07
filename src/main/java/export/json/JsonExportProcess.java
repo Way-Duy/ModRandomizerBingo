@@ -120,8 +120,7 @@ public class JsonExportProcess implements Runnable
 
         final IForgeRegistry<Item> itemRegistry = ForgeRegistries.ITEMS;
 
-        final ExportMode mode = this.config.isAdditionalInformationEnabled() ? ExportMode.VERBOSE : ExportMode.MINIMAL;
-        final Exporter exporter = new MinecraftItemJsonExporter( this.exportDirectory, itemRegistry, mode );
+        final Exporter exporter = new MinecraftItemJsonExporter( this.exportDirectory, itemRegistry );
 
         exporter.export();
 

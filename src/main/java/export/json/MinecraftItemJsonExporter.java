@@ -61,22 +61,18 @@ final class MinecraftItemJsonExporter implements export.json.Exporter
 	private final File exportDirectory;
 	@Nonnull
 	private final IForgeRegistry<Item> itemRegistry;
-	@Nonnull
-	private final export.json.ExportMode mode;
 
 	/**
 	 * @param exportDirectory directory of the resulting export file. Non-null required.
 	 * @param itemRegistry the registry with minecraft items. Needs to be populated at that time, thus the exporting can
 	 * only happen in init (pre-init is the
 	 * phase when all items are determined)
-	 * @param mode mode in which the export should be operated. Resulting CSV will change depending on this.
 	 */
-	MinecraftItemJsonExporter(@Nonnull final File exportDirectory, @Nonnull final IForgeRegistry<Item> itemRegistry, @Nonnull final export.json.ExportMode mode )
+	MinecraftItemJsonExporter(@Nonnull final File exportDirectory, @Nonnull final IForgeRegistry<Item> itemRegistry )
 	{
 		this.exportDirectory = Preconditions.checkNotNull( exportDirectory );
 		Preconditions.checkArgument( !exportDirectory.isFile() );
 		this.itemRegistry = Preconditions.checkNotNull( itemRegistry );
-		this.mode = Preconditions.checkNotNull( mode );
 	}
 
 	@Override
@@ -85,7 +81,7 @@ final class MinecraftItemJsonExporter implements export.json.Exporter
 		final Iterable<Item> items = this.itemRegistry;
 		final List<Item> itemList = Lists.newArrayList( items );
 
-		final List<String> lines = Lists.transform( itemList, new ItemRowExtractFunction( this.itemRegistry, this.mode ) );
+		final List<String> lines = Lists.transform( itemList, new ItemRowExtractFunction( this.itemRegistry ) );
 
 		final Joiner newLineJoiner = Joiner.on( '\n' );
 		final Joiner newLineJoinerIgnoringNull = newLineJoiner.skipNulls();
@@ -96,10 +92,6 @@ final class MinecraftItemJsonExporter implements export.json.Exporter
 		try(final Writer writer = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( file ), Charset.forName( "UTF-8" ) ) ) )
 		{
 			FileUtils.forceMkdir( this.exportDirectory );
-
-			final String header = this.mode == export.json.ExportMode.MINIMAL ? MINIMAL_HEADER : VERBOSE_HEADER;
-			writer.write( header );
-			writer.write( "\n" );
 			writer.write( joined );
 			writer.flush();
 
@@ -121,15 +113,12 @@ final class MinecraftItemJsonExporter implements export.json.Exporter
 
 		@Nonnull
 		private final String itemName;
-		@Nonnull
-		private final export.json.ExportMode mode;
 
-		private TypeExtractFunction( @Nonnull final String itemName, @Nonnull final export.json.ExportMode mode )
+		private TypeExtractFunction( @Nonnull final String itemName )
 		{
 			this.itemName = Preconditions.checkNotNull( itemName );
 			Preconditions.checkArgument( !itemName.isEmpty() );
 
-			this.mode = Preconditions.checkNotNull( mode );
 		}
 
 		@Nullable
@@ -148,25 +137,10 @@ final class MinecraftItemJsonExporter implements export.json.Exporter
 			final List<String> joinedBlockAttributes = Lists.newArrayListWithCapacity( 5 );
 			final int meta = input.getItemDamage();
 			final String metaName = this.itemName + ':' + meta;
-			final String localization = input.getDisplayName();
 
 			joinedBlockAttributes.add( metaName );
-			joinedBlockAttributes.add( localization );
 
-			if( this.mode == export.json.ExportMode.VERBOSE )
-			{
-				final Item item = input.getItem();
-				final String unlocalizedItem = input.getUnlocalizedName();
-				final Block block = Block.getBlockFromItem( item );
-				final boolean isBlock = block != Blocks.AIR && !block.equals( Blocks.AIR );
-				final Class<? extends ItemStack> stackClass = input.getClass();
-				final String stackClassName = stackClass.getName();
-
-				joinedBlockAttributes.add( unlocalizedItem );
-				joinedBlockAttributes.add( Boolean.toString( isBlock ) );
-				joinedBlockAttributes.add( stackClassName );
-			}
-			ModBingoLog.info("item name = " + itemName);
+			ModBingoLog.info("meta name = " + metaName);
 			final Joiner csvJoiner = Joiner.on( ", " );
 			final Joiner csvJoinerIgnoringNulls = csvJoiner.skipNulls();
 
@@ -189,17 +163,13 @@ final class MinecraftItemJsonExporter implements export.json.Exporter
 
 		@Nonnull
 		private final IForgeRegistry<Item> itemRegistry;
-		@Nonnull
-		private final export.json.ExportMode mode;
 
 		/**
 		 * @param itemRegistry used to retrieve the name of the item
-		 * @param mode extracts more or less information from item depending on mode
 		 */
-		ItemRowExtractFunction( @Nonnull final IForgeRegistry<Item> itemRegistry, @Nonnull final export.json.ExportMode mode )
+		ItemRowExtractFunction( @Nonnull final IForgeRegistry<Item> itemRegistry )
 		{
 			this.itemRegistry = Preconditions.checkNotNull( itemRegistry );
-			this.mode = Preconditions.checkNotNull( mode );
 		}
 
 		@Nullable
@@ -246,29 +216,16 @@ final class MinecraftItemJsonExporter implements export.json.Exporter
 
 				final Joiner newLineJoiner = Joiner.on( '\n' );
 				final Joiner typeJoiner = newLineJoiner.skipNulls();
-				final List<String> transformedTypes = Lists.transform( stacks, new TypeExtractFunction( itemName, this.mode ) );
+				final List<String> transformedTypes = Lists.transform( stacks, new TypeExtractFunction( itemName ) );
 
 				return typeJoiner.join( transformedTypes );
 			}
 
 			final List<String> joinedBlockAttributes = Lists.newArrayListWithCapacity( 5 );
 			final String unlocalizedItem = input.getUnlocalizedName();
-			final String localization = I18n.translateToLocal( unlocalizedItem + LOCALIZATION_NAME_EXTENSION );
 
 			joinedBlockAttributes.add( itemName );
-			joinedBlockAttributes.add( localization );
 
-			if( this.mode == export.json.ExportMode.VERBOSE )
-			{
-				final Block block = Block.getBlockFromItem( input );
-				final boolean isBlock = block != Blocks.AIR && !block.equals( Blocks.AIR );
-				final Class<? extends Item> itemClass = input.getClass();
-				final String itemClassName = itemClass.getName();
-
-				joinedBlockAttributes.add( unlocalizedItem );
-				joinedBlockAttributes.add( Boolean.toString( isBlock ) );
-				joinedBlockAttributes.add( itemClassName );
-			}
 
 			final Joiner csvJoiner = Joiner.on( ", " );
 			final Joiner csvJoinerIgnoringNulls = csvJoiner.skipNulls();

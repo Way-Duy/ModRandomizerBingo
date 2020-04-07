@@ -1,6 +1,6 @@
 package com.snagtype.modbingo;
 
-import export.ExportConfig;
+import export.json.ExportConfig;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
@@ -9,9 +9,9 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.apache.logging.log4j.Logger;
-import export.ExportProcess;
-import export.ExportConfig;
-import export.ForgeExportConfig;
+import export.json.JsonExportProcess;
+import export.json.ForgeExportConfig;
+import export.json.ExportConfig;
 import javax.annotation.Nonnull;
 import java.io.File;
 
@@ -39,7 +39,7 @@ public class BingoModRandomizer
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-        final ExportProcess process = new ExportProcess(this.configDirectory, this.exportConfig);
+        final JsonExportProcess process = new JsonExportProcess(this.configDirectory, this.exportConfig);
         final Thread exportProcessThread = new Thread( process);
         this.startService( "BingoMod CSV Export", exportProcessThread);
         // some example code
