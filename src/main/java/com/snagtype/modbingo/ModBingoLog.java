@@ -26,10 +26,12 @@ import org.apache.logging.log4j.message.ParameterizedMessage;
 
 import net.minecraft.util.math.BlockPos;
 
+import java.io.File;
+
 
 public final class ModBingoLog
 {
-    private static final String LOGGER_PREFIX = "AE2:";
+    private static final String LOGGER_PREFIX = "BMR:";
     private static final String SERVER_SUFFIX = "S";
     private static final String CLIENT_SUFFIX = "C";
 
