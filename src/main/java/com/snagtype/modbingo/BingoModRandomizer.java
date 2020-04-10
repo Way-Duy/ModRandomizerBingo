@@ -42,8 +42,10 @@ public class BingoModRandomizer
         final JsonExportProcess process = new JsonExportProcess(this.configDirectory, this.exportConfig);
         final Thread exportProcessThread = new Thread( process);
         this.startService( "BingoMod Json Export", exportProcessThread);
-        // some example code
-       // logger.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+        //final BingoAdvancementPage Process = new BingoAdvancementPage(this.configDirectory, , true); // need itemforge list of 25 items
+        final Thread BingoAdvancementPageThread = new Thread();
+        //this.startService("BingoMod Creating Advancements Page",BingoAdvancementPageThread);
+
     }
     private void startService( final String serviceName, final Thread thread )
     {
