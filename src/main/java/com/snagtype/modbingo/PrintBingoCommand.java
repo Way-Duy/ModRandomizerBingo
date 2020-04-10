@@ -21,12 +21,12 @@ import java.util.Random;
 public class PrintBingoCommand implements ICommand {
 
     private final List aliases;
-    private static final String NAME = "bingo";
+    private static final String NAME = "bingot";
     private List<Item> itemList = null;
 
     public PrintBingoCommand(){
         aliases = new ArrayList();
-        aliases.add("bingo");
+        aliases.add("bingot");
 
         IForgeRegistry<Item> itemRegistry = ForgeRegistries.ITEMS;
         Iterable<Item> items = itemRegistry;
@@ -41,7 +41,7 @@ public class PrintBingoCommand implements ICommand {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "bingo";
+        return "bingot";
     }
 
     @Override
