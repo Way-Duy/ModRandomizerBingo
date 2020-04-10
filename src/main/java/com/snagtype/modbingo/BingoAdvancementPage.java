@@ -4,6 +4,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -27,7 +30,7 @@ import java.util.List;
 import java.util.function.Supplier;
 final class BingoAdvancementPage implements Runnable {
 
-
+    private static final String BINGO_BACKGROUND = "minecraft:textures/gui/advancements/backgrounds/stone.png";
     private static final String ITEM_JSON_FILE_NAME_SUFFIX = ".json";
     private static final String EXPORT_SUCCESSFUL_MESSAGE = "Exported successfully %d items into %s";
     private static final String EXPORT_UNSUCCESSFUL_MESSAGE = "Exporting was unsuccessful.";
@@ -49,12 +52,13 @@ final class BingoAdvancementPage implements Runnable {
         this.itemName = Preconditions.checkNotNull( itemName );
         this.isFreeSpaceEnabled = isFreeSpaceEnabled;
     }
-    private void writer(File exportDirectory, String fileName, List<String> lines) //string array needed
+    private void writer(File exportDirectory, String fileName, JsonObject lines) //string array needed
     {
         final File file = new File(this.exportDirectory, fileName);
         try (final Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), Charset.forName("UTF-8")))) {
             FileUtils.forceMkdir(this.exportDirectory);
-            //writer.write(joined);
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            writer.write(gson.toJson(lines));
             writer.flush();
 
            // ModBingoLog.info(EXPORT_SUCCESSFUL_MESSAGE, lines.size(), fileName);
@@ -89,23 +93,19 @@ final class BingoAdvancementPage implements Runnable {
             for (int y = 0; y < NUM_OF_ROWS; y++) {
                 for (int x = 0; x < NUM_OF_COLS; x++) {
                     int iterationNum = (y + x * NUM_OF_ROWS) +1;
-                    String fileName = iterationNum+ ITEM_JSON_FILE_NAME_SUFFIX;
+                    String fileName = "Row "+ (y+1) + " Col " + (x+1) + ITEM_JSON_FILE_NAME_SUFFIX;
                     int parentIteration = x-1;
                     String parentName;
                     if (y==0)
                     {
                         parentName = ROOT_NAME;
                     }
-                    else
-                        parentName = parentIteration+ITEM_JSON_FILE_NAME_SUFFIX;
-                    final List<String> lines = Lists.transform(itemList, new BingoAdvancementPage.BuildChildJson( this.itemName,parentName));
-                   /* final Joiner newLineJoiner = Joiner.on('\n');
-                    final Joiner newLineJoinerIgnoringNull = newLineJoiner.skipNulls();
-                    final String joined = newLineJoinerIgnoringNull.join(lines);
+                    else {
+                        parentName = parentIteration + ITEM_JSON_FILE_NAME_SUFFIX;
 
-
-                    */
-                   writer(this.exportDirectory, fileName,lines);
+                    }
+                    final JsonObject lines = BuildChildJson( this.itemName,parentName);
+                    writer(this.exportDirectory, fileName,lines);
                 }
             }
         else {
@@ -122,80 +122,69 @@ final class BingoAdvancementPage implements Runnable {
                     }
                     else
                         parentName = parentIteration+ITEM_JSON_FILE_NAME_SUFFIX;
-                    final List<String> lines = Lists.transform(itemList, new BuildChildJson(this.itemName, parentName));
-                    /*final Joiner newLineJoiner = Joiner.on('\n');
-                    final Joiner newLineJoinerIgnoringNull = newLineJoiner.skipNulls();
 
-
-                    final String joined = newLineJoinerIgnoringNull.join(lines);
-                        */
+                    final JsonObject lines = BuildChildJson( this.itemName,parentName);
                     writer(this.exportDirectory,fileName,lines );
                 }
             }
         }
 
     }
-    List<String> BuildRootJson()
+    JsonObject BuildRootJson()
     {
-        List<String> lines = new ArrayList<String>();
-        /* final JsonObject jsonObject = new JsonObject();
-            jsonObject.add()
-            return jsonObject;*/
+        JsonObject lines = new JsonObject();
+        JsonObject display = new JsonObject();
+        JsonObject criteria = new JsonObject();
+        JsonObject title = new JsonObject();
+        JsonObject description = new JsonObject();
+        JsonObject icon = new JsonObject();
+        JsonObject dummy = new JsonObject();
+        JsonObject conditions = new JsonObject();
+        JsonArray itemsarray = new JsonArray();
+        JsonObject items = new JsonObject();
+
+        display.add("title",title);
+        display.add("description", description);
+        display.add("icon", icon);
+        dummy.addProperty("trigger" , "minecraft:inventory_changed");
+
+        dummy.add("conditions", conditions);
+        conditions.add("items", itemsarray);
+
+        items.addProperty("item", "minecraft:cobblestone");
+        title.addProperty("text", "Advancement");
+        description.addProperty("text", "Description");
+        icon.addProperty("item", "minecraft:map");
+        display.addProperty("frame", "task");
+        display.addProperty("show_toast", "true");
+        display.addProperty("announce_to_chat", "true");
+        display.addProperty("hidden", "false");
+        display.addProperty("background", BINGO_BACKGROUND);
+
+        itemsarray.add(items);
+        lines.add("display", display);
+        criteria.add("dummy", dummy);
+        lines.add("criteria" , criteria);
 
         return lines;
     }
-    private static final class BuildChildJson implements Function<Item, String> {
+        public JsonObject BuildChildJson(@Nonnull final List<Item> itemName, String parentName) {
 
-        /**
-         * this extension is required to apply the {@link I18n}
-         */
-        private static final String LOCALIZATION_NAME_EXTENSION = ".name";
-        private static final String EXPORTING_NOTHING_MESSAGE = "Exporting nothing";
-        private static final String EXPORTING_SUBTYPES_MESSAGE = "Exporting input %s with subtypes: %b";
-        private static final String EXPORTING_SUBTYPES_FAILED_MESSAGE = "Could not export subtypes of: %s";
+            JsonObject lines = new JsonObject();
 
-        @Nonnull
-        private final List<Item> itemName;
-
-        private BuildChildJson(@Nonnull final List<Item> itemName, String parentName) {
-            this.itemName = Preconditions.checkNotNull(itemName);
-
+            JsonObject display = new JsonObject();
+            display.add("title", new JsonArray());
+            display.add("description", new JsonArray());
+            display.add("icon", new JsonArray());
+            display.addProperty("frame", "task");
+            display.addProperty("show_toast", "true");
+            display.addProperty("announce_to_chat", "true");
+            display.addProperty("hidden", "false");
+            lines.add("display", display);
+        return lines;
         }
 
-        @Nullable
-        @Override
-        public String apply( @Nullable final Item input )
-        {
-            if( input == null )
-            {
-                //ModBingoLog.debug( EXPORTING_NOTHING_MESSAGE );
 
-                return null;
-            }
-            else
-            {
-                //ModBingoLog.debug( EXPORTING_SUBTYPES_MESSAGE, input.getUnlocalizedName(), input.getHasSubtypes() );
-            }
-
-            final String itemName = ForgeRegistries.ITEMS.getKey( input ).toString();
-
-
-            final List<String> joinedBlockAttributes = Lists.newArrayListWithCapacity( 5 );
-            final String unlocalizedItem = input.getUnlocalizedName();
-            joinedBlockAttributes.add( itemName );
-
-
-           /* final Joiner jsonJoiner = Joiner.on( ", " );
-            final Joiner jsonJoinerIgnoringNulls = jsonJoiner.skipNulls();
-
-            return jsonJoinerIgnoringNulls.join( joinedBlockAttributes );
-            */
-           /* final JsonObject jsonObject = new JsonObject();
-            jsonObject.add()
-            return jsonObject;*/
-           return null;
-        }
-    }
     }
 
 
