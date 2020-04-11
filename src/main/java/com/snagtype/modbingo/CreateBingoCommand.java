@@ -28,7 +28,7 @@ public class CreateBingoCommand implements ICommand {
     private final List aliases;
     private static final String NAME = "bingo";
     private List<Item> itemList = null;
-    private static final String ADVANCEMENT_DIRECTORY_SUFFIX = "/data/advancements/Bingo";
+    private static final String ADVANCEMENT_DIRECTORY_SUFFIX = "/data/advancements/bingo";
     private File advancementDirectory;
     public CreateBingoCommand(){
         aliases = new ArrayList();
