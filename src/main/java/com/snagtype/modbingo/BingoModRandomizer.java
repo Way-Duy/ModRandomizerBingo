@@ -59,7 +59,6 @@ public class BingoModRandomizer
 
     @EventHandler
     public void serverLoad(FMLServerStartingEvent event){
-        event.registerServerCommand(new PrintBingoCommand());
         event.registerServerCommand(new CreateBingoCommand());
     }
 

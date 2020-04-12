@@ -1,33 +1,18 @@
 package com.snagtype.modbingo;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.translation.I18n;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraft.advancements.Advancement;
 import org.apache.commons.io.FileUtils;
 import com.google.gson.JsonObject;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.*;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import java.util.function.Supplier;
 final class BingoAdvancementPage implements Runnable {
 
     private static final String BINGO_DESCRIPTION = "Collect the following items to fill out your bingo card";
@@ -47,15 +32,15 @@ final class BingoAdvancementPage implements Runnable {
     @Nonnull
     private final File exportDirectory;
     @Nonnull
-    private final List<Item> itemName;
+    private final List<Item> itemList;
     private final boolean isFreeSpaceEnabled;
     private static String ROOT_NAME = "root"; //beyond me why they don't make the suffix required
 
     //  BingoAdvancementPage(final IForgeRegistry<Item> itemRegistry)
-    BingoAdvancementPage(@Nonnull final File exportDirectory, @Nonnull final List<Item> itemName, boolean isFreeSpaceEnabled) {
+    BingoAdvancementPage(@Nonnull final File exportDirectory, @Nonnull final List<Item> itemList, boolean isFreeSpaceEnabled) {
         this.exportDirectory = Preconditions.checkNotNull(exportDirectory);
         Preconditions.checkArgument(!exportDirectory.isFile());
-        this.itemName = Preconditions.checkNotNull(itemName);
+        this.itemList = Preconditions.checkNotNull(itemList);
         this.isFreeSpaceEnabled = isFreeSpaceEnabled;
     }
 
@@ -88,9 +73,6 @@ final class BingoAdvancementPage implements Runnable {
     }
 
     public void export() {
-        final Iterable<Item> items = this.itemName;
-        final List<Item> itemList = Lists.newArrayList(items);
-
         //start by creating a root which creates the page in advancements gui
 
         writer(this.exportDirectory, ROOT_NAME + ".json", BuildRootJson());
@@ -98,7 +80,7 @@ final class BingoAdvancementPage implements Runnable {
         // 25 different item space json files
         for (int y = 0; y < NUM_OF_ROWS; y++) {
             for (int x = 0; x < NUM_OF_COLS+1; x++) {
-                int iterationNum = (y + x * NUM_OF_ROWS) + 1;
+                int iterationNum = (x + y * NUM_OF_ROWS);
                 String fileName = "Row_" + (y + 1) + "_Col_" + (x + 1);
                 int parentIteration = x - 1;
                 String parentName;
@@ -113,7 +95,7 @@ final class BingoAdvancementPage implements Runnable {
                     final JsonObject lines =BuildDummyJson(parentName);
                     writer(this.exportDirectory, fileName + ".json", lines);
                 } else {
-                    Item currItem = itemName.get(iterationNum);
+                    Item currItem = this.itemList.get(iterationNum);
                     final JsonObject lines = BuildChildJson(currItem, parentName);
                     writer(this.exportDirectory, fileName + ".json", lines);
                 }

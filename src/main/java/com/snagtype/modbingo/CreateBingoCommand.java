@@ -1,6 +1,7 @@
 package com.snagtype.modbingo;
 
 import com.google.common.collect.Lists;
+import com.snagtype.utils.RandomItems;
 import export.json.JsonExportProcess;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
@@ -29,6 +30,7 @@ public class CreateBingoCommand implements ICommand {
     private static final String NAME = "bingo";
     private List<Item> itemList = null;
     private static final String ADVANCEMENT_DIRECTORY_SUFFIX = "/data/advancements/bingo";
+    private static final int DEFAULT_BINGO_ITEMS = 25;
     private File advancementDirectory;
     public CreateBingoCommand(){
         aliases = new ArrayList();
@@ -59,9 +61,7 @@ public class CreateBingoCommand implements ICommand {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        IForgeRegistry<Item> itemRegistry = ForgeRegistries.ITEMS;
-        Iterable<Item> items = itemRegistry;
-        itemList = Lists.newArrayList( items );
+        itemList = RandomItems.getRandomItemList(DEFAULT_BINGO_ITEMS);
         final BingoAdvancementPage process = new BingoAdvancementPage(this.advancementDirectory,itemList , false); // need itemforge list of 25 items
         final Thread BingoAdvancementPageThread = new Thread(process);
 
