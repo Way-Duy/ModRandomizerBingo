@@ -1,17 +1,25 @@
 package com.snagtype.modbingo;
-
+import  net.minecraft.advancements.AdvancementManager;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import net.minecraft.client.Minecraft;
+import net.minecraft.command.ICommandSender;
 import net.minecraft.item.Item;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
+import net.minecraftforge.client.ClientCommandHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.commons.io.FileUtils;
 import com.google.gson.JsonObject;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.List;
+import net.minecraft.command.CommandReload;
 
 final class BingoAdvancementPage implements Runnable {
 
@@ -101,6 +109,9 @@ final class BingoAdvancementPage implements Runnable {
                 }
             }
         }
+        //FMLCommonHandler.instance().getMinecraftServerInstance().getAdvancementManager().reload();
+        FMLCommonHandler.instance().getMinecraftServerInstance().reload();
+
     }
 
     public JsonObject BuildDummyJson( String parentName) {

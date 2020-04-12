@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import export.json.ExportConfig;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -38,6 +39,7 @@ public class BingoModRandomizer
         final File recipeFile = new File( this.configDirectory, "CustomRecipes.cfg" );
         final Configuration recipeConfiguration = new Configuration(recipeFile);
         this.exportConfig = new ForgeExportConfig (recipeConfiguration );
+
     }
 
     @EventHandler

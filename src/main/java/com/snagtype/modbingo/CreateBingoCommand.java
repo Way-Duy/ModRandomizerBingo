@@ -14,6 +14,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.common.DimensionManager;
@@ -65,6 +66,7 @@ public class CreateBingoCommand implements ICommand {
         final BingoAdvancementPage process = new BingoAdvancementPage(this.advancementDirectory,itemList , false); // need itemforge list of 25 items
         final Thread BingoAdvancementPageThread = new Thread(process);
 
+        FMLCommonHandler.instance().getMinecraftServerInstance().setMOTD("BINGO SERVER");
         this.startService("BingoMod Creating Advancements Page",BingoAdvancementPageThread);
     }
     private void startService( final String serviceName, final Thread thread )
