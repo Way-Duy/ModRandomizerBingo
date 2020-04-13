@@ -1,6 +1,12 @@
-package com.snagtype.modbingo;
+package com.snagtype.modbingo.commands;
 
 import com.google.common.collect.Lists;
+import com.snagtype.modbingo.AdvancementConfig;
+import com.snagtype.modbingo.BingoAdvancementConfig;
+import com.snagtype.modbingo.ModBingoLog;
+import com.snagtype.utils.RandomItems;
+import com.sun.security.auth.login.ConfigFile;
+import export.json.JsonExportProcess;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
@@ -10,29 +16,29 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraft.world.storage.ISaveHandler;
+import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.common.DimensionManager;
 
 import javax.annotation.Nullable;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class PrintBingoCommand implements ICommand {
+public class ToggleFreeSpaceCommand implements ICommand {
 
     private final List aliases;
-    private static final String NAME = "printbingo";
-    private List<Item> itemList = null;
-
-    public PrintBingoCommand(){
+    private static AdvancementConfig configDirectory;
+    private static final String NAME = "togglefreespace";
+    private BingoAdvancementConfig config;
+    public ToggleFreeSpaceCommand(BingoAdvancementConfig config){
         aliases = new ArrayList();
-        aliases.add("printbingo");
-
-        IForgeRegistry<Item> itemRegistry = ForgeRegistries.ITEMS;
-        Iterable<Item> items = itemRegistry;
-        itemList = Lists.newArrayList( items );
-
+        aliases.add("bingo togglefree");
+        this.config = config;
     }
 
     @Override
@@ -42,7 +48,7 @@ public class PrintBingoCommand implements ICommand {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "bingot";
+        return "switches the free space on or off";
     }
 
     @Override
@@ -50,19 +56,18 @@ public class PrintBingoCommand implements ICommand {
         return this.aliases;
     }
 
-    public Item getRandomItem(){
-        Random rand = new Random();
-        return itemList.get(rand.nextInt(itemList.size()));
-    }
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        World world = sender.getEntityWorld();
-        Item input = getRandomItem();
-        String itemName = ForgeRegistries.ITEMS.getKey( input ).toString();
-        sender.sendMessage(new TextComponentString(TextFormatting.WHITE + itemName));
+        config.toggleFreeSpace();
+        if (config.isFreeSpaceEnabled())
+        {
+            ModBingoLog.info("Free Space Now Enabled");
+        }
+        else {
+            ModBingoLog.info("Free Space Now Disabled");
+        }
     }
-
     @Override
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
         return true;

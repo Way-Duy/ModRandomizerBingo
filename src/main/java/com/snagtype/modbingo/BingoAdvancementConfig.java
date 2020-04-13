@@ -15,7 +15,7 @@ public final class BingoAdvancementConfig implements AdvancementConfig{
     private static final boolean FREE_SPACE_ENABLED_DEFAULT = true;
     private static final String FREE_SPACE_ENABLED_DESCRIPTION = "If true, Bingo middle space will be Free and it will generate 1 less achievement.";
 
-    private final boolean freeSpaceEnabled;
+    private static boolean freeSpaceEnabled;
     private final Configuration config;
 
     public BingoAdvancementConfig( @Nonnull final Configuration config ) {
@@ -29,6 +29,13 @@ public final class BingoAdvancementConfig implements AdvancementConfig{
     {
         return this.freeSpaceEnabled;
     }
+    public void toggleFreeSpace(){
+        if(freeSpaceEnabled)
+         freeSpaceEnabled = false;
+        else
+            freeSpaceEnabled = true;
+    }
+
 }
 /*
 public final class ForgeExportConfig implements ExportConfig

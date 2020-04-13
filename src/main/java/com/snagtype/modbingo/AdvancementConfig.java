@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 public interface AdvancementConfig {
 
    boolean isFreeSpaceEnabled();
+   void toggleFreeSpace();
 }
 /*
 public interface ExportConfig

@@ -1,19 +1,16 @@
-package com.snagtype.modbingo;
+package com.snagtype.modbingo.commands;
 
 import com.google.common.collect.Lists;
+import com.snagtype.modbingo.BingoAdvancementConfig;
+import com.snagtype.modbingo.BingoAdvancementPage;
+import com.snagtype.modbingo.ModBingoLog;
 import com.snagtype.utils.RandomItems;
-import export.json.JsonExportProcess;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.item.Item;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
-import net.minecraft.world.storage.ISaveHandler;
-import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -28,14 +25,16 @@ import java.util.Random;
 public class CreateBingoCommand implements ICommand {
 
     private final List aliases;
-    private static final String NAME = "bingo";
+    private static final String NAME = "createbingocard";
     private List<Item> itemList = null;
     private static final String ADVANCEMENT_DIRECTORY_SUFFIX = "/data/advancements/bingo";
     private static final int DEFAULT_BINGO_ITEMS = 25;
     private File advancementDirectory;
-    public CreateBingoCommand(){
+    private BingoAdvancementConfig config;
+    public CreateBingoCommand(BingoAdvancementConfig config){
         aliases = new ArrayList();
-        aliases.add("bingo");
+        aliases.add("bingo create");
+        this.config = config;
         this.advancementDirectory = new File(DimensionManager.getCurrentSaveRootDirectory()+ ADVANCEMENT_DIRECTORY_SUFFIX);
         ModBingoLog.info(advancementDirectory.toString());
     }
@@ -47,7 +46,7 @@ public class CreateBingoCommand implements ICommand {
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "bingo";
+        return "generates a new bingo board in your advancements tab";
     }
 
     @Override
@@ -63,7 +62,7 @@ public class CreateBingoCommand implements ICommand {
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         itemList = RandomItems.getRandomItemList(DEFAULT_BINGO_ITEMS);
-        final BingoAdvancementPage process = new BingoAdvancementPage(this.advancementDirectory,itemList , false); // need itemforge list of 25 items
+        final BingoAdvancementPage process = new BingoAdvancementPage(this.advancementDirectory,itemList ,config.isFreeSpaceEnabled() ); // need itemforge list of 25 items
         final Thread BingoAdvancementPageThread = new Thread(process);
 
         FMLCommonHandler.instance().getMinecraftServerInstance().setMOTD("BINGO SERVER");

@@ -21,7 +21,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 import net.minecraft.command.CommandReload;
 
-final class BingoAdvancementPage implements Runnable {
+public final class BingoAdvancementPage implements Runnable {
 
     private static final String BINGO_DESCRIPTION = "Collect the following items to fill out your bingo card";
     private static final String BINGO_ADVANCEMENT = "BINGO!";
@@ -45,7 +45,7 @@ final class BingoAdvancementPage implements Runnable {
     private static String ROOT_NAME = "root"; //beyond me why they don't make the suffix required
 
     //  BingoAdvancementPage(final IForgeRegistry<Item> itemRegistry)
-    BingoAdvancementPage(@Nonnull final File exportDirectory, @Nonnull final List<Item> itemList, boolean isFreeSpaceEnabled) {
+    public BingoAdvancementPage(@Nonnull final File exportDirectory, @Nonnull final List<Item> itemList, boolean isFreeSpaceEnabled) {
         this.exportDirectory = Preconditions.checkNotNull(exportDirectory);
         Preconditions.checkArgument(!exportDirectory.isFile());
         this.itemList = Preconditions.checkNotNull(itemList);
@@ -86,23 +86,38 @@ final class BingoAdvancementPage implements Runnable {
         writer(this.exportDirectory, ROOT_NAME + ".json", BuildRootJson());
 
         // 25 different item space json files
+        // row names are broken by minecraft and goes as follows
+        /*
+        4
+        1
+        5
+        3
+        2
+         */
         for (int y = 0; y < NUM_OF_ROWS; y++) {
             for (int x = 0; x < NUM_OF_COLS+1; x++) {
                 int iterationNum = (x + y * NUM_OF_ROWS);
                 String fileName = "Row_" + (y + 1) + "_Col_" + (x + 1);
-                int parentIteration = x - 1;
+                //ModBingoLog.info(fileName);
                 String parentName;
                 if (x == 0) {// connecting first col to root
                     parentName = ROOT_NAME;
                 } else {
-                    parentName = "Row_" + (y + 1) + "_Col_" + (x);
+                    parentName ="Row_" + (y + 1) + "_Col_" + x; // parent file one column away from child
 
 
                 }
                 if (x == 5) {
                     final JsonObject lines =BuildDummyJson(parentName);
                     writer(this.exportDirectory, fileName + ".json", lines);
-                } else {
+                }
+                else if (x==2 && y==4 && isFreeSpaceEnabled) {  //free space
+
+                    Item currItem = this.itemList.get(iterationNum);
+                    final JsonObject lines = BuildFreeSpace( parentName);
+                    writer(this.exportDirectory, fileName + ".json", lines);
+                }else
+                {
                     Item currItem = this.itemList.get(iterationNum);
                     final JsonObject lines = BuildChildJson(currItem, parentName);
                     writer(this.exportDirectory, fileName + ".json", lines);
@@ -113,7 +128,59 @@ final class BingoAdvancementPage implements Runnable {
         FMLCommonHandler.instance().getMinecraftServerInstance().reload();
 
     }
+    private int RowFix(int y)
+    {
+        y++;
+        if (y==1)
+            return 2;
+        else if (y==2)
+            return 5;
 
+        else if (y==3)
+            return 4;
+
+        else if (y==4)
+            return 1;
+        else
+            return 3;
+    }
+    public JsonObject BuildFreeSpace( String parentName) {
+
+        JsonObject lines = new JsonObject();
+        JsonObject display = new JsonObject();
+        JsonObject criteria = new JsonObject();
+        JsonObject title = new JsonObject();
+        JsonObject description = new JsonObject();
+        JsonObject icon = new JsonObject();
+        JsonObject dummy = new JsonObject();
+        JsonObject conditions = new JsonObject();
+        JsonArray itemsarray = new JsonArray();
+        JsonObject items = new JsonObject();
+
+        display.add("title",title);
+        display.add("description", description);
+        display.add("icon", icon);
+        dummy.addProperty("trigger" , "minecraft:tick");
+
+        dummy.add("conditions", conditions);
+        conditions.add("items", itemsarray);
+
+        title.addProperty("text", "FREE");
+        description.addProperty("text", "Free Space");
+        icon.addProperty("item", BINGO_ICON);
+        display.addProperty("frame", "task");
+        display.addProperty("show_toast", false);
+        display.addProperty("announce_to_chat", false);
+        display.addProperty("hidden", true);
+
+        itemsarray.add(items);
+        lines.add("display", display);
+        criteria.add("Acquire_Item", dummy);
+        lines.add("criteria" , criteria);
+        lines.addProperty("parent", "bingo:" + parentName);
+
+        return lines;
+    }
     public JsonObject BuildDummyJson( String parentName) {
 
         JsonObject lines = new JsonObject();
