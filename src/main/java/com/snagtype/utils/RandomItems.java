@@ -40,9 +40,49 @@ public class RandomItems {
 
         return itemList.get(0);
     }
+        //now with list parameter for mod weights
+    public static Item getRandomItemFromMod(List<Item> itemListFromMod) {
+
+
+        Collections.shuffle(itemListFromMod);
+
+        // checks that item can be found in creative tabs
+        final CreativeTabs creativeTab = itemListFromMod.get(0).getCreativeTab();
+        final NonNullList<ItemStack> stacks = NonNullList.create();
+        try {
+            if (creativeTab.equals(null)) {
+            }
+        }
+        catch (Exception e) {
+            ModBingoLog.info("exception block not found in Creativetabs = " + itemListFromMod.get(0));
+            ModBingoLog.info("shuffling items and trying again");
+            return getRandomItemFromMod(itemListFromMod);
+        }
+        // need to add code for meta values here
+
+
+
+        return itemList.get(0);
+    }
+    public static String getRandomMod(List<String> modList) { // picks a random mod not found on blacklist
+
+
+        Collections.shuffle(modList);
+
+       //if mod found on blacklist
+        /*
+       if(blacklist.find(modList.get(0))
+            return getRandomMod(modList));
+
+         */
+        return modList.get(0);
+    }
+
 
     public static List<Item> getRandomItemList(int numItems) throws IllegalArgumentException{
 
+        // ** todo going to need to pull the modlist from json file instead here
+        //list <String> modList =
         if(numItems > itemList.size() - 1){
             throw new IllegalArgumentException();
         }
@@ -54,5 +94,15 @@ public class RandomItems {
                 itemList.add(getRandomItem());
             }
         return itemList.subList(0, numItems);
+
+        /* with mod weights
+        for (int i = 1; i < numItems; i++)
+        {
+            list <item> itemListFromMod = generateModItemList(getRandomMod(modList);
+            getRandomItemFromMod(itemListFromMod)
+        }
+        return itemList.subList(0, numItems);
+
+         */
     }
 }

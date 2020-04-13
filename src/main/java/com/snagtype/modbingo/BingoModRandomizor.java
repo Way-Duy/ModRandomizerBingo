@@ -1,7 +1,6 @@
 package com.snagtype.modbingo;
 
-import com.snagtype.modbingo.commands.CreateBingoCommand;
-import com.snagtype.modbingo.commands.ToggleFreeSpaceCommand;
+import com.snagtype.modbingo.commands.*;
 import export.json.ExportConfig;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
@@ -19,8 +18,10 @@ import java.io.File;
 public class BingoModRandomizor
 {
     private File configDirectory;
+    private File ModBlacklistDirectory;
     private ExportConfig exportConfig;
     //private ExportConfig testExportConfig;
+
     private BingoAdvancementConfig bingoConfig;
     public static final String MODID = "modbingo";
     public static final String NAME = "Mod Bingo";
@@ -32,12 +33,16 @@ public class BingoModRandomizor
     {
         logger = event.getModLog();
         this.configDirectory = new File(event.getModConfigurationDirectory().getPath(), "BingoMod");final File recipeFile = new File( this.configDirectory, "CustomRecipes.cfg" );
-
         final Configuration recipeConfiguration = new Configuration(recipeFile);
-        final File configFile = new File(this.configDirectory, "Bingo.cfg" );
+        this.exportConfig = new ForgeExportConfig (recipeConfiguration );
+
+        final File configFile = new File(this.configDirectory, "Bingo.cfg" ); //creating bingo.cfg empty
         final Configuration bingoConfiguration = new Configuration(configFile);
         bingoConfig = new BingoAdvancementConfig(bingoConfiguration);
-        this.exportConfig = new ForgeExportConfig (recipeConfiguration );
+
+        ModBlacklistDirectory = new File(this.configDirectory, "ModBlacklist.json");
+        new Configuration(ModBlacklistDirectory); //creating empty blacklist file hopefully only if it doesn't already exist
+
 
     }
 
@@ -62,6 +67,9 @@ public class BingoModRandomizor
     public void serverLoad(FMLServerStartingEvent event){
         event.registerServerCommand(new CreateBingoCommand(this.bingoConfig));
         event.registerServerCommand(new ToggleFreeSpaceCommand(this.bingoConfig));
+        event.registerServerCommand(new AddModToBlacklistCommand(ModBlacklistDirectory));
+        event.registerServerCommand(new PrintModBlacklistCommand(ModBlacklistDirectory));
+        event.registerServerCommand(new RemoveModFromBlacklistCommand(ModBlacklistDirectory));
     }
 
 }

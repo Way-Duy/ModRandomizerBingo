@@ -11,6 +11,8 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.item.Item;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -67,6 +69,8 @@ public class CreateBingoCommand implements ICommand {
 
         FMLCommonHandler.instance().getMinecraftServerInstance().setMOTD("BINGO SERVER");
         this.startService("BingoMod Creating Advancements Page",BingoAdvancementPageThread);
+
+        sender.sendMessage(new TextComponentString(TextFormatting.GREEN + "Bingo Card generated in Advancements"));
     }
     private void startService( final String serviceName, final Thread thread )
     {
