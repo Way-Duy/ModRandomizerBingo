@@ -37,7 +37,7 @@ public class ToggleFreeSpaceCommand implements ICommand {
     private BingoAdvancementConfig config;
     public ToggleFreeSpaceCommand(BingoAdvancementConfig config){
         aliases = new ArrayList();
-        aliases.add("bingo togglefree");
+        aliases.add("togglefree");
         this.config = config;
     }
 

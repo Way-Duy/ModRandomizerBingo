@@ -35,7 +35,7 @@ public class CreateBingoCommand implements ICommand {
     private BingoAdvancementConfig config;
     public CreateBingoCommand(BingoAdvancementConfig config){
         aliases = new ArrayList();
-        aliases.add("bingo create");
+        aliases.add("create");
         this.config = config;
         this.advancementDirectory = new File(DimensionManager.getCurrentSaveRootDirectory()+ ADVANCEMENT_DIRECTORY_SUFFIX);
         ModBingoLog.info(advancementDirectory.toString());

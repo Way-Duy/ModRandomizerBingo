@@ -67,9 +67,9 @@ public class BingoModRandomizor
     public void serverLoad(FMLServerStartingEvent event){
         event.registerServerCommand(new CreateBingoCommand(this.bingoConfig));
         event.registerServerCommand(new ToggleFreeSpaceCommand(this.bingoConfig));
-        event.registerServerCommand(new AddModToBlacklistCommand(ModBlacklistDirectory));
-        event.registerServerCommand(new PrintModBlacklistCommand(ModBlacklistDirectory));
-        event.registerServerCommand(new RemoveModFromBlacklistCommand(ModBlacklistDirectory));
+        //event.registerServerCommand(new AddModToBlacklistCommand(ModBlacklistDirectory));
+       // event.registerServerCommand(new PrintModBlacklistCommand(ModBlacklistDirectory));
+        //event.registerServerCommand(new RemoveModFromBlacklistCommand(ModBlacklistDirectory));
     }
 
 }
