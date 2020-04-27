@@ -98,9 +98,10 @@ final class MinecraftItemJsonExporter implements export.json.Exporter
 	JsonObject convertItemsToJSON(Iterable<Item> items) {
 		JsonObject itemsJson = new JsonObject();
 		JsonObject currMod, currItem;
-		JsonArray currItemList, currMeta;
+		JsonArray currItemList, currMeta, modNames = new JsonArray();
 		String currModName, currItemName;
 		int curItemCount = 0;
+		itemsJson.add("modnames", modNames);
 
 		// Iterate over every item
 		for (Item i : items) {
@@ -113,6 +114,7 @@ final class MinecraftItemJsonExporter implements export.json.Exporter
 
 			// check if mod has already been added to the json before
 			if (!itemsJson.has(currModName)) {
+				modNames.add(currModName);
 				currMod = new JsonObject();
 				currMod.addProperty("count", 0);
 				currMod.add("items", new JsonArray());
