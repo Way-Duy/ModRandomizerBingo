@@ -1,7 +1,9 @@
 package com.snagtype.utils;
 
 import com.google.common.collect.Lists;
+import com.snagtype.modbingo.BingoModRandomizor;
 import com.snagtype.modbingo.ModBingoLog;
+import jdk.nashorn.internal.parser.JSONParser;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -9,12 +11,19 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import com.google.gson.*;
+
+
 
 public class RandomItems {
 
+    public File configDirectory = BingoModRandomizor.configDirectory;
     private static Iterable<Item> items = ForgeRegistries.ITEMS;
     private static List<Item> itemList = Lists.newArrayList( items);
     public static Item getRandomItem() {
@@ -77,11 +86,23 @@ public class RandomItems {
          */
         return modList.get(0);
     }
+    public void readJson()
+    {
+
+        try {
+            Object obj = new JsonParser().parse(new FileReader(configDirectory + "items.json"));
+            JsonObject currMod= (JsonObject) obj;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
     public static List<Item> getRandomItemList(int numItems) throws IllegalArgumentException{
 
         // ** todo going to need to pull the modlist from json file instead here
+
         //list <String> modList =
         if(numItems > itemList.size() - 1){
             throw new IllegalArgumentException();
@@ -105,4 +126,5 @@ public class RandomItems {
 
          */
     }
+
 }

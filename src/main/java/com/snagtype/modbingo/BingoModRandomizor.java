@@ -17,8 +17,8 @@ import java.io.File;
 @Mod(modid = BingoModRandomizor.MODID, name = BingoModRandomizor.NAME, version = BingoModRandomizor.VERSION)
 public class BingoModRandomizor
 {
-    private File configDirectory;
-    private File ModBlacklistDirectory;
+    public static File configDirectory;
+    public static File ModBlacklistDirectory;
     private ExportConfig exportConfig;
     //private ExportConfig testExportConfig;
 
@@ -32,7 +32,8 @@ public class BingoModRandomizor
     public void preInit(FMLPreInitializationEvent event)
     {
         logger = event.getModLog();
-        this.configDirectory = new File(event.getModConfigurationDirectory().getPath(), "BingoMod");final File recipeFile = new File( this.configDirectory, "CustomRecipes.cfg" );
+        this.configDirectory = new File(event.getModConfigurationDirectory().getPath(), "BingoMod");
+        final File recipeFile = new File( this.configDirectory, "CustomRecipes.cfg" );
         final Configuration recipeConfiguration = new Configuration(recipeFile);
         this.exportConfig = new ForgeExportConfig (recipeConfiguration );
 
