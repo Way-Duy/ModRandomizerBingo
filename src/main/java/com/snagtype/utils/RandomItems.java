@@ -3,7 +3,6 @@ package com.snagtype.utils;
 import com.google.common.collect.Lists;
 import com.snagtype.modbingo.BingoModRandomizor;
 import com.snagtype.modbingo.ModBingoLog;
-import jdk.nashorn.internal.parser.JSONParser;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -27,7 +26,7 @@ public class RandomItems {
     public static File configDirectory = BingoModRandomizor.configDirectory;
     private static Iterable<Item> items = ForgeRegistries.ITEMS;
     private static List<Item> itemList = Lists.newArrayList( items);
-    private static List<String> modBlackList;
+    private static List<String> modBlackList = null;
     public static Item getRandomItem() {
 
 
@@ -98,24 +97,28 @@ public class RandomItems {
     {
         List<String> modList = new ArrayList<>();
         try {
-            Object obj = new JsonParser().parse(new FileReader(configDirectory + "/items.json"));
+            Object obj = new JsonParser().parse(new FileReader(configDirectory + "\\items.json"));
             JsonObject itemsJson= (JsonObject) obj;
             JsonArray modNamesArray = (JsonArray) itemsJson.get("modnames");
             //Iterating the contents of the array
+
+            ModBingoLog.info(modNamesArray.toString());
             Iterator<JsonElement> iterator = modNamesArray.iterator();
 
             while(iterator.hasNext()) {
                 String name = iterator.next().toString();
                 modList.add(name);
             }
+
+            /*
             for(String blacklist : modBlackList)// removes items from blacklist
             {
                 for (String entrant : modList)
                 {
-                    if (entrant == blacklist)
+                    if (entrant.substring(1,entrant.length()-1) == blacklist)
                         modList.remove(entrant);
                 }
-            }
+            }*/
             Collections.shuffle(modList);
             String modName = modList.get(0);
             List <Item>itemListFromMod = new ArrayList<>();

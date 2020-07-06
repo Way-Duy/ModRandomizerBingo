@@ -40,10 +40,10 @@ public class BingoModRandomizor
         final File configFile = new File(this.configDirectory, "Bingo.cfg" ); //creating bingo.cfg empty
         final Configuration bingoConfiguration = new Configuration(configFile);
         bingoConfig = new BingoAdvancementConfig(bingoConfiguration);
-
-        ModBlacklistDirectory = new File(this.configDirectory, "ModBlacklist.json");
+/*
+        ModBlacklistDirectory = new File(this.configDirectory, "");
         new Configuration(ModBlacklistDirectory); //creating empty blacklist file hopefully only if it doesn't already exist
-
+*/
 
     }
 
@@ -68,7 +68,7 @@ public class BingoModRandomizor
     public void serverLoad(FMLServerStartingEvent event){
         event.registerServerCommand(new CreateBingoCommand(this.bingoConfig));
         event.registerServerCommand(new ToggleFreeSpaceCommand(this.bingoConfig));
-        //event.registerServerCommand(new AddModToBlacklistCommand(ModBlacklistDirectory));
+        //event.registerServerCommand(new AddModToBlacklistCommand(ModBlacklistDirectory,this.bingoConfig));
        // event.registerServerCommand(new PrintModBlacklistCommand(ModBlacklistDirectory));
         //event.registerServerCommand(new RemoveModFromBlacklistCommand(ModBlacklistDirectory));
     }

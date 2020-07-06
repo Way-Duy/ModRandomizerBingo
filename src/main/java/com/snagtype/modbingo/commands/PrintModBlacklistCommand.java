@@ -12,10 +12,11 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import java.io.File;
 import com.google.common.collect.Lists;
 import com.google.gson.*;
 public class PrintModBlacklistCommand implements ICommand {
@@ -49,7 +50,20 @@ public class PrintModBlacklistCommand implements ICommand {
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         //prints the list of blacklisted mods aqui
-       // sender.sendMessage(new TextComponentString(TextFormatting.WHITE + (args + " removed from Bingo Blacklist")));
+        try {
+            BufferedReader in = new BufferedReader(
+                    new FileReader(ModBlacklistDirectory +"/ModBlacklist.json" ));
+
+            String line;
+            while ((line = in.readLine()) != null) {
+                sender.sendMessage(new TextComponentString(TextFormatting.WHITE + (line)));
+            }
+        }
+        catch (IOException e) {e.printStackTrace();
+        }
+
+
+
 
     }
     @Override
