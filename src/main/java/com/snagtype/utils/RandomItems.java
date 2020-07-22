@@ -75,7 +75,8 @@ public class RandomItems {
         {
             if (name == itemListFromMod.get(0))
             {
-                return getRandomItemFromMod(itemListFromMod, finalList);
+
+                return getRandomItemFromMod(pullItemListFromRandomMod(), finalList);
             }
         }
         return itemListFromMod.get(0);
